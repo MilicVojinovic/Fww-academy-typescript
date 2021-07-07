@@ -1,32 +1,41 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+<div id="app" class="h-screen w-screen">
+    <div class="h-full">
+        <!-- <component :is="dynamicComponent"></component> -->
+        <layout>
+            <router-view />
+        </layout>
     </div>
-    <router-view />
-  </div>
+</div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script lang="ts">
+import {
+    Component,
+    Vue
+} from 'vue-property-decorator'
+@Component
+export default class App extends Vue {
+    public components: string[] = ['loader', 'messages'];
+	mounted() {
+	}
+    // get loader() {
+    //         return this.$store.getters["appStore/getState"]("loader");
+    //     };
+    // get messages() {
+    //         return this.$store.getters["appStore/getState"]("messages").response;
+    //     };
+    // get dynamicComponent() {
+    //         let activeComponent;
+    //         this.components.forEach(element => {
+    //             if (this[element]) {
+    //                 activeComponent = element
+    //             }
+    //         });
+	// 		return activeComponent;
+    // }
 }
+</script>
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
+<style lang='scss'>
 </style>
