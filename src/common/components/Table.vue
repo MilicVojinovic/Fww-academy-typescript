@@ -52,11 +52,11 @@
 </template>
 
 <script lang="ts">
-export default {
-    data() {
-        return {
-        }
-    },
+import {
+    Component,
+    Vue
+} from 'vue-property-decorator'
+@Component({
     props: {
         tableHead: {
             required: true,
@@ -89,6 +89,9 @@ export default {
             type: String,
 		}
     },
+})
+export default class Table extends Vue {
+    
 }
 </script>
 

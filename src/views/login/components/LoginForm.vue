@@ -15,18 +15,11 @@ import {
     minLength,
     email
 } from "vuelidate/lib/validators";
-export default {
-    name: 'loginform',
-    data() {
-        return {
-            login: {
-                email: "",
-                password: "",
-            },
-        }
-    },
-    methods: {
-    },
+import {
+    Component,
+    Vue
+} from 'vue-property-decorator'
+@Component({
     validations: {
         login: {
             email: {
@@ -39,6 +32,9 @@ export default {
             },
         },
     },
+})
+export default class LoginForm extends Vue {
+    public login: {	email : string,	password : string } = { email: "", password: "" };
 }
 </script>
 

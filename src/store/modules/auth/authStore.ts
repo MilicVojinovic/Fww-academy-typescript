@@ -1,108 +1,109 @@
 import SHA512 from "crypto-js/sha512";
 import { ROLES, TOKEN_LS_NAME } from "../../../constants/constants";
-import { authService } from '../../../modules/auth/auth.service'
+import { authService } from './auth.service';
+import store from '@/store';
 
-const authStore = {
-	namespaced: true,
-	state: {
-		loggedUser: null,
-	},
+import { VuexModule, Module, getModule , Mutation, Action } from 'vuex-module-decorators'
+@Module({ namespaced: true, store})
+class AuthStore extends VuexModule {
+	public loggedUser: object | null = null;
 
-	getters: {
-		getState: (state) => (prop) => {
-			return state[prop];
-		},
-	},
+	get getLoggedUser(): object | null {
+		return this.loggedUser;
+	}
 
-	mutations: {
-		setState: (state, { prop, value }) => {
-			state[prop] = value;
-		},
-	},
-
-	actions: {
-		async login({commit}, payload) {
-			try {
-				let formData = { ...payload };
-				formData.password = SHA512(formData.password).toString()
-
-				const account = await authService.login(formData);
-
-				commit('setState', {
-					prop: 'loggedUser',
-					value: account.data
-				});
-
-				let redirectTo = '/';
-				if (account.data.role === ROLES.student) {
-					redirectTo = '/student-home';
-				} else if (account.data.role === ROLES.teacher) {
-					redirectTo = '/teacher-home';
-				}
-
-				localStorage.setItem(TOKEN_LS_NAME, account.data['session-id']);
-				return Promise.resolve(redirectTo);
-
-			} catch (error) {
-				return Promise.reject(error);
+	@Mutation
+	public setState(obj: any) {
+		for (const key in this) {
+			if (key === obj.prop) {
+				this[key] = obj.value;
 			}
-		},
+		}
+	}
 
-		async fetchActiveAccount({ commit }) {
-			try {
-				const account = await authService.fetchActiveAccount();
+	@Action({ rawError: true })
+	async login(payload: any): Promise<any> {
+		try {
+			let formData = { ...payload };
 
-				commit('setState', {
-					prop: 'loggedUser',
-					value: account.data
-				});
+			formData.password = SHA512(formData.password).toString()
 
-				return Promise.resolve(account);
-			} catch (error) {
-				return Promise.reject(error);
-			}
-		},
+			const account = await authService.login(formData);
 
-		logout({ commit }) {
-			authService.removeToken();
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'loggedUser',
-				value: null
+				value: account.data
 			});
-		},
 
-		async register({commit}, payload) {
-			try {
-				let formData = { ...payload };
-				formData.password = SHA512(formData.password).toString()
-
-				await authService.register(formData);
-
-				const account = await authService.login({
-					email : formData.email,
-					password : formData.password
-				});
-
-				commit('setState', {
-					prop: 'loggedUser',
-					value: account.data
-				});
-
-				let redirectTo = '/';
-				if (account.data.role === ROLES.student) {
-					redirectTo = '/student-home';
-				} else if (account.data.role === ROLES.teacher) {
-					redirectTo = '/teacher-home';
-				}
-
-				localStorage.setItem(TOKEN_LS_NAME, account.data['session-id']);
-				return Promise.resolve(redirectTo);
-
-			} catch (error) {
-				return Promise.reject(error);
+			let redirectTo = '/';
+			if (account.data.role === ROLES.student) {
+				redirectTo = '/student-home';
+			} else if (account.data.role === ROLES.teacher) {
+				redirectTo = '/teacher-home';
 			}
-		},
-	},
-};
 
-export default authStore;
+			localStorage.setItem(TOKEN_LS_NAME, account.data['session-id']);
+			return Promise.resolve(redirectTo);
+
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	};
+	@Action({ rawError: true })
+	async fetchActiveAccount() {
+		try {
+			const account = await authService.fetchActiveAccount();
+
+			this.context.commit('setState', {
+				prop: 'loggedUser',
+				value: account.data
+			});
+
+			return Promise.resolve(account);
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	};
+	@Action({ rawError: true })
+	logout() {
+		authService.removeToken();
+		this.context.commit('setState', {
+			prop: 'loggedUser',
+			value: null
+		});
+	};
+	@Action({ rawError: true })
+	async register(payload: any) {
+		try {
+			let formData = { ...payload };
+			formData.password = SHA512(formData.password).toString()
+
+			await authService.register(formData);
+
+			const account = await authService.login({
+				email: formData.email,
+				password: formData.password
+			});
+
+			this.context.commit('setState', {
+				prop: 'loggedUser',
+				value: account.data
+			});
+
+			let redirectTo = '/';
+			if (account.data.role === ROLES.student) {
+				redirectTo = '/student-home';
+			} else if (account.data.role === ROLES.teacher) {
+				redirectTo = '/teacher-home';
+			}
+
+			localStorage.setItem(TOKEN_LS_NAME, account.data['session-id']);
+			return Promise.resolve(redirectTo);
+
+		} catch (error) {
+			return Promise.reject(error);
+		}
+	};
+
+}
+export default AuthStore;

@@ -15,30 +15,33 @@
 <script lang="ts">
 import LoginForm from './components/LoginForm.vue'
 import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
+import {
+    Component,
+    Mixins
+} from 'vue-property-decorator'
+import { namespace } from "vuex-class";
 
-export default {
-    name: 'Login',
-    components: {
-        LoginForm,
-    },
-    data() {
-        return {
-        }
+const AuthStore = namespace("authStore");
 
-    },
-	mixins: [NotificationMessageMixin],
-    mounted() {},
-    methods: {
-        signIn(loginData) {
-            this.$store.dispatch("authStore/login", loginData).then((result) => {
-                this.$router.push(result)
-            }).catch((err) => {
-				this.notificationMessage(err , '')
-            });
-        }
+@Component({
+	components: {
+    LoginForm
+  }
+})
+export default class Login extends Mixins(NotificationMessageMixin) {
+	mounted() {};
 
+	@AuthStore.Action
+	login!: (data: any) => Promise<any>;
+
+    signIn(loginData : object) {
+        this.login(loginData).then((result) => {
+            this.$router.push(result)
+        })
+		.catch((err) => {
+			this.notificationMessage(err , '')
+        });
     }
-
 }
 </script>
 

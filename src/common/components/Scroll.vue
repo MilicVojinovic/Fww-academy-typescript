@@ -6,6 +6,13 @@
 </div>
 </template>
 
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+@Component
+export default class Scroll extends Vue {
+}
+</script>
+
 <style scoped>
 .scroll-y {
     overflow: scroll !important;

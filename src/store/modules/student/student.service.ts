@@ -1,35 +1,35 @@
 import { studentRepo } from "./student.repo";
 
 class StudentService {
-	fetchUnratedCourse(payload) {
+	fetchUnratedCourse(payload : any) {
 		return studentRepo.fetchUnratedCourse(payload);
 	}
 
-	sendCourseRate(payload) {
+	sendCourseRate(payload : any) {
 		return studentRepo.sendCourseRate(payload);
 	}
 
-	fetchStudentsFinishedCourses(payload) {
+	fetchStudentsFinishedCourses(payload : any) {
 		return studentRepo.fetchStudentsFinishedCourses(payload);
 	}
 
-	fetchStudentsUnattendedCourses(payload) {
+	fetchStudentsUnattendedCourses(payload : any) {
 		return studentRepo.fetchStudentsUnattendedCourses(payload);
 	}
 
-	fetchStudentsCurrentCourses(payload) {
+	fetchStudentsCurrentCourses(payload : any) {
 		return studentRepo.fetchStudentsCurrentCourses(payload);
 	}
 
-	fetchStudentsCourseInfo(payload) {
+	fetchStudentsCourseInfo(payload : any) {
 		return studentRepo.fetchStudentsCourseInfo(payload);
 	}
 
-	fetchCourseInfo(payload) {
+	fetchCourseInfo(payload : any) {
 		return studentRepo.fetchCourseInfo(payload);
 	}
 
-	requestCourse(payload) {
+	requestCourse(payload : any) {
 		return studentRepo.requestCourse(payload);
 	}
 }

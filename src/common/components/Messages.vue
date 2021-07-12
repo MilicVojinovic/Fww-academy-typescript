@@ -1,7 +1,7 @@
 <template>
 <div class="messages w-full h-full absolute left-0 top-0 z-10 bg-opacity-75 overflow-hidden">
     <div class="relative h-full w-full">
-        <div ref="messageBox" class="rounded-md message relative flex items-center justify-center" :class="this.messages.successMessages ? messageColorGreen : messageColorRed">
+        <div ref="messageBox" class="rounded-md message relative flex items-center justify-center" :class="getMessages.successMessages ? messageColorGreen : messageColorRed">
             <span class="text-white">{{messageText}}</span>
         </div>
     </div>
@@ -18,6 +18,11 @@ import {
     Component,
     Mixins
 } from 'vue-property-decorator'
+import {
+    namespace
+} from "vuex-class";
+const AppStore = namespace("appStore");
+
 @Component
 export default class Messages extends Mixins(NotificationMessageMixin) {
     public messageColorRed: string = 'bg-red-400';
@@ -26,29 +31,32 @@ export default class Messages extends Mixins(NotificationMessageMixin) {
     mounted() {
         const messageBox: any = this.$refs.messageBox;
         let count = 0;
-        messageBox.addEventListener("animationend", () => {
+		if (messageBox) {
+			messageBox.addEventListener("animationend", () => {
             count++;
             if (count === 3) {
                 this.notificationMessage(null, '')
             }
         })
+		}
+        
     };
 
-    get messages() {
-        return this.$store.getters["appStore/getState"]("messages");
-    };
+	@AppStore.Getter
+    public getMessages: any;
+
     get messageText() {
-        if (this.messages.response && this.messages.response.status === 200) {
-            if (!this.messages.successMessages) {
+        if (this.getMessages.response && this.getMessages.response.status === 200) {
+            if (!this.getMessages.successMessages) {
                 return 'Uspešno!'
             }
 			let succesCodesVar: any = succesCodes.SUCCESS_CODES;
-            return succesCodesVar[this.messages.successMessages];
+            return succesCodesVar[this.getMessages.successMessages];
         }
 
-        if (this.messages.response && this.messages.response.response && this.messages.response.response.data) {
+        if (this.getMessages.response && this.getMessages.response.response && this.getMessages.response.response.data) {
 			let errorCodesVar: any = errorCodes.ERROR_CODES;
-            return errorCodesVar[this.messages.response.response.data.errors]
+            return errorCodesVar[this.getMessages.response.response.data.errors]
         } else {
             return 'Nešto nije u redu!'
         }

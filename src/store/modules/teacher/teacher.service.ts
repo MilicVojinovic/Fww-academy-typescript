@@ -6,35 +6,35 @@ class TeacherService {
 		return teacherRepo.fetchAllTeachers();
 	}
 
-	fetchTeacherData(payload) {
+	fetchTeacherData(payload : any) {
 		return teacherRepo.fetchTeacherData(payload);
 	}
 
-	fetchTeacherCourses(payload) {
+	fetchTeacherCourses(payload : any) {
 		return teacherRepo.fetchTeacherCourses(payload);
 	}
 
-	createCourse(payload) {
+	createCourse(payload : any) {
 		return teacherRepo.createCourse(payload);
 	}
 
-	editCourse(payload) {
+	editCourse(payload : any) {
 		return teacherRepo.editCourse(payload);
 	}
 
-	deleteCourse(payload) {
+	deleteCourse(payload : any) {
 		return teacherRepo.deleteCourse(payload);
 	}
 
-	fetchTeacherStudents(payload) {
+	fetchTeacherStudents(payload : any) {
 		return teacherRepo.fetchTeacherStudents(payload);
 	}
 
-	assignCourse(payload) {
+	assignCourse(payload : any) {
 		return teacherRepo.assignCourse(payload);
 	}
 
-	setCourseCompleted(payload) {
+	setCourseCompleted(payload : any) {
 		return teacherRepo.setCourseCompleted(payload);
 	}
 
@@ -42,7 +42,7 @@ class TeacherService {
 		return teacherRepo.fetchTeacherRequestCourses();
 	}
 
-	setCourseAccepted(payload) {
+	setCourseAccepted(payload : any) {
 		return teacherRepo.setCourseAccepted(payload);
 	}
 }

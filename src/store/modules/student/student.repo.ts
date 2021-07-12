@@ -8,43 +8,43 @@ const ROUTES = {
 
 class StudentRepo {
 	
-	fetchUnratedCourse(payload) {
+	fetchUnratedCourse(payload : any) {
 		const URL = `${ROUTES.STUDENT}/${payload.student_id}/rate_course`
 		return api.get(URL);
 	}
 
-	sendCourseRate(payload) {
+	sendCourseRate(payload : any) {
 		const URL = `${ROUTES.STUDENT}/${payload.student_id}/rate_course`
 		return api.post(URL , payload.data);
 	}
 
-	fetchStudentsFinishedCourses(payload) {
+	fetchStudentsFinishedCourses(payload : any) {
 		const URL = `${ROUTES.STUDENT}s/${payload.student_id}/complete_course`
 		return api.get(URL);
 	}
 
-	fetchStudentsUnattendedCourses(payload) {
+	fetchStudentsUnattendedCourses(payload : any) {
 		const query = queryString.stringify(payload, {skipNull: true});
 		const URL = `${ROUTES.STUDENT}/courses?${query}`
 		return api.get(URL);
 	}
 
-	fetchStudentsCourseInfo(payload) {
+	fetchStudentsCourseInfo(payload : any) {
 		const URL = `${ROUTES.STUDENT}/courses/${payload.course_id}`
 		return api.get(URL);
 	}
 
-	fetchStudentsCurrentCourses(payload) {
+	fetchStudentsCurrentCourses(payload : any) {
 		const URL = `${ROUTES.STUDENT}s/${payload.student_id}/course`
 		return api.get(URL);
 	}
 
-	fetchCourseInfo(payload) {
+	fetchCourseInfo(payload : any) {
 		const URL = `${ROUTES.COURSES}/${payload.course_id}`
 		return api.get(URL);
 	}
 
-	requestCourse(payload) {
+	requestCourse(payload : any) {
 		const URL = `${ROUTES.STUDENT}/request_course/${payload.course_id}`
 		return api.post(URL , {comment : payload.comment });
 	}

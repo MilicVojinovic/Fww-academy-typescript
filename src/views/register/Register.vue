@@ -16,24 +16,27 @@
 import RegisterForm from './components/RegisterForm.vue'
 import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
 
-export default {
-    name: 'Register',
+import {
+    Component,
+    Mixins
+} from 'vue-property-decorator'
+
+@Component({
     components: {
         RegisterForm
-    },
-    mounted() {},
-	mixins: [NotificationMessageMixin],
-    methods: {
-        register(registerData) {
-            this.$store.dispatch("authStore/register", registerData).then((result) => {
-                this.$router.push(result)
-            }).catch((err) => {
-				this.notificationMessage(err , '')
-            });
-        }
-
     }
 
+})
+
+export default class Register extends Mixins(NotificationMessageMixin) {
+    mounted() {};
+    register(registerData: object) {
+        this.$store.dispatch("authStore/register", registerData).then((result) => {
+            this.$router.push(result)
+        }).catch((err) => {
+            this.notificationMessage(err, '')
+        });
+    }
 }
 </script>
 

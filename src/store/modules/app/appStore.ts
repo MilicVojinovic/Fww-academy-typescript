@@ -1,27 +1,34 @@
 
-const appStore = {
-	namespaced: true,
-	state: {
-		loader: false,
-		messages: {
-			response : null,
-			successMessage : ''
-		},
-	},
-	getters: {
-		getState: (state) => (prop) => {
-			return state[prop];
-		},
-	},
+import { VuexModule, Module, Mutation } from 'vuex-module-decorators';
+import store from '@/store';
+@Module({ namespaced: true, store })
+class AppStore extends VuexModule {
+	public name: string = '';
+	public loader: boolean = false;
+	public messages: {
+		response: any,
+		successMessage: any
+	} = {
+			response: null,
+			successMessage: ''
+		};
 
-	mutations: {
-		setState: (state, { prop, value }) => {
-			state[prop] = value;
+	get getName(): string {
+		return this.name;
+	}
+	get getLoader(): boolean {
+		return this.loader;
+	}
+	get getMessages(): any {
+		return this.messages;
+	}
+	@Mutation
+	public setState(obj: any) {
+		for (const key in this) {
+			if (key === obj.prop) {
+				this[key] = obj.value;
+			}
 		}
-	},
-
-	actions: {
-	},
-};
-
-export default appStore;
+	}
+}
+export default AppStore

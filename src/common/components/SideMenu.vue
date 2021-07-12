@@ -21,24 +21,24 @@
 </template>
 
 <script lang="ts">
-export default {
+import {
+    Component,
+    Vue
+} from 'vue-property-decorator'
+@Component({
     props: {
         menuList: {
             required: true,
             type: Array
         },
     },
-    data() {
-        return {
-            menuClosed: false,
-        }
-    },
-    mounted() {},
-    methods: {
-        logout() {
-            this.$store.dispatch("authStore/logout")
-            this.$router.push('/')
-        }
+})
+export default class SideMenu extends Vue {
+    public menuClosed: boolean = false;
+    mounted() {};
+    logout() {
+        this.$store.dispatch("authStore/logout")
+        this.$router.push('/')
     }
 };
 </script>

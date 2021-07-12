@@ -1,12 +1,12 @@
 import { authRepo } from "./auth.repo";
-import { TOKEN_LS_NAME } from "../../constants/constants";
+import { TOKEN_LS_NAME } from "@/constants/constants";
 
 class AuthService {
-	login(data) {
+	login(data :any) {
 		return authRepo.login(data);
 	}
 
-	register(data) {
+	register(data :any) {
 		return authRepo.register(data);
 	}
 

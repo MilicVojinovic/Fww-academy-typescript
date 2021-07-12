@@ -1,7 +1,8 @@
 <template>
 <div id="app" class="h-screen w-screen">
     <div class="h-full">
-        <!-- <component :is="dynamicComponent"></component> -->
+        <component v-if="getLoader" :is="'loader'"></component>
+		<component v-if="getMessages && getMessages.response" :is="'messages'"></component>
         <layout>
             <router-view />
         </layout>
@@ -14,26 +15,21 @@ import {
     Component,
     Vue
 } from 'vue-property-decorator'
+import {
+    namespace
+} from "vuex-class";
+
+const AppStore = namespace("appStore");
+
 @Component
 export default class App extends Vue {
-    public components: string[] = ['loader', 'messages'];
-	mounted() {
-	}
-    // get loader() {
-    //         return this.$store.getters["appStore/getState"]("loader");
-    //     };
-    // get messages() {
-    //         return this.$store.getters["appStore/getState"]("messages").response;
-    //     };
-    // get dynamicComponent() {
-    //         let activeComponent;
-    //         this.components.forEach(element => {
-    //             if (this[element]) {
-    //                 activeComponent = element
-    //             }
-    //         });
-	// 		return activeComponent;
-    // }
+    mounted() {}
+    @AppStore.Getter
+    public getLoader: any;
+
+    @AppStore.Getter
+    public getMessages: any;
+
 }
 </script>
 

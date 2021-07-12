@@ -6,11 +6,11 @@ const ROUTES = {
 };
 
 class AuthRepo {
-	login(data) {
+	login(data :any) {
 		return api.post(ROUTES.LOGIN, data);
 	}
 
-	register(data) {
+	register(data :any) {
 		return api.post(ROUTES.REGISTER, data);
 	}
 

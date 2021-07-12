@@ -1,37 +1,34 @@
 <template>
 <div class="teacher flex w-full h-full p-5 bg-blue-50">
     <div class="flex flex-col">
+		 <i class="fas-fa-check"></i>
         <div class="mb-3">Vaši podaci</div>
-        <div class="mb-3">Ime : {{loggedUser.name}}</div>
-        <div class="mb-3">Prezime : {{loggedUser.surname}}</div>
-        <div class="mb-3">E-mail : {{loggedUser.email}}</div>
+        <div class="mb-3">Ime : {{getLoggedUser.name}}</div>
+        <div class="mb-3">Prezime : {{getLoggedUser.surname}}</div>
+        <div class="mb-3">E-mail : {{getLoggedUser.email}}</div>
     </div>
 </div>
 </template>
 
 <script lang="ts">
-import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
+import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin';
+import { idObject } from '@/common/typeInterfaces/idObjects';
+import {
+    Component,
+    Mixins
+} from 'vue-property-decorator';
 
-export default {
-    data() {
-        return {};
-    },
-	mixins: [NotificationMessageMixin],
-    created() {
-            this.$store.dispatch("teacherStore/fetchTeacherData",{ id : this.loggedUser.id} )
-			.then(() => {})
-			.catch((err) => {
-                this.notificationMessage(err , '')
-            });
-    },
-    methods: {},
-    computed: {
-        teacherData() {
-            return this.$store.getters["teacherStore/getState"]("teacher")
-        },
-		loggedUser() {
-            return this.$store.getters["authStore/getState"]("loggedUser");
-        },
-    }
+import { namespace } from "vuex-class";
+
+const AuthStore = namespace("authStore");
+const TeacherStore = namespace("teacherStore");
+
+@Component
+export default class TeacherHome extends Mixins(NotificationMessageMixin) {
+
+	@AuthStore.Getter
+    public getLoggedUser!: idObject | null ;
+
 };
 </script>
+AuthStore
