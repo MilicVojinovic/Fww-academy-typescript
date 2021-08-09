@@ -6,7 +6,7 @@
 	<div class="flex w-full px-8 mb-8 justify-between">
 		<div class="flex flex-col">
 			<span class="mb-2">Izaberite kurs</span>
-			<v-select class="style-chooser bg-white w-48 v-select-custom" :autoscroll="true" :clearable="false"  v-model="selectedCourse" label="name" @input="filterList()"  :options="teacherCourses ? teacherCourses : []" />
+			<v-select class="style-chooser bg-white w-48 v-select-custom" :autoscroll="true" :clearable="false"  v-model="selectedCourse" label="name" @input="filterList()"  :options="getTeacherCourses ? getTeacherCourses : []" />
 		</div>
 		<div class="flex flex-col">
 			<span class="mb-2">Lista studenata koji  </span>
@@ -18,9 +18,9 @@
 		</div>
 		
 	</div>
-    <div v-if="teacherStudents && completed" class="flex flex-grow relative">
+    <div v-if="getTeacherStudents && completed" class="flex flex-grow relative">
         <Scroll class="scroll">
-            <Table :tableHead="['Ime i prezime studenta' , 'Datum upisa na kurs' , 'Označite da je student je prošao kurs' ]"   :tableData="teacherStudents" 
+            <Table :tableHead="['Ime i prezime studenta' , 'Datum upisa na kurs' , 'Označite da je student je prošao kurs' ]"   :tableData="getTeacherStudents" 
 			:tableDataFields='[
 			{
 				value:"user",
@@ -46,9 +46,9 @@
         </Scroll>
     </div>
 
-	<div v-if="teacherStudents && !completed" class="flex flex-grow relative">
+	<div v-if="getTeacherStudents && !completed" class="flex flex-grow relative">
         <Scroll class="scroll">
-            <Table :tableHead="['Ime i prezime studenta' , 'Datum upisa na kurs' ]"   :tableData="teacherStudents" 
+            <Table :tableHead="['Ime i prezime studenta' , 'Datum upisa na kurs' ]"   :tableData="getTeacherStudents" 
 			:tableDataFields='[
 			{
 				value:"user",
@@ -71,38 +71,61 @@
 </template>
 <script lang="ts">
 import moment from 'moment';
-import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
-export default {
-    data() {
-        return {
-			completed : false,
-			selectedCourse : null,
-			startDate : null,
-			completedOptions : [
-				{
-					title : 'pohadjaju kurs.',
-					value : false 
-				},
-				{
-					title : 'su položili kurs.',
-					value : true 
-				},
-			]
-        }
-    },
-    components: {
-    },
-	mixins: [NotificationMessageMixin],
+import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin';
+import { namespace } from "vuex-class";
+import { idObject } from '@/common/typeInterfaces/idObjects';
+import Component from 'vue-class-component';
+
+const TeacherStore = namespace("teacherStore");
+const AuthStore = namespace("authStore");
+
+@Component
+export default class TeacherStudentList extends NotificationMessageMixin {
+	
+	public  completed : {
+			title : string,
+			value : boolean 
+		} = {
+			title : 'pohadjaju kurs.',
+			value : false } ;
+	public	selectedCourse : any = null ;
+	public	startDate : string = '';
+	public	completedOptions : { title : string , value : boolean }[] = [
+			{
+				title : 'pohadjaju kurs.',
+				value : false 
+			},
+			{
+				title : 'su položili kurs.',
+				value : true 
+			},
+		]
+
+	@TeacherStore.Action
+	public fetchTeacherRequestCourses! : () => Promise<any> 
+
+	@TeacherStore.Action
+	public fetchTeacherCourses! : (payload : any) => Promise<any>
+
+	@TeacherStore.Action
+	public fetchTeacherStudents! : (payload : any) => Promise<any>
+
+	@TeacherStore.Action
+	public setCourseCompleted! : (payload : any) => Promise<any>
+
+	
+	
+
     created() {
-		this.$store.dispatch("teacherStore/fetchTeacherCourses", {
-			id: this.loggedUser.id
+		this.fetchTeacherCourses({
+			id: this.getLoggedUser?.id
 		})
 		.then((res) => { 
-			this.selectedCourse = res.data[0]
+			this.selectedCourse = res[0]
 
-			this.$store.dispatch("teacherStore/fetchTeacherStudents", {
-				course_id : res.data[0].id,
-				// start_date : '',
+			this.fetchTeacherStudents({
+				course_id : this.selectedCourse.id,
+				start_date : null,
 				complete : this.completedOptions[0].value,
 			})
 			.then(() => {})
@@ -111,61 +134,60 @@ export default {
 			});
 		})
 		.catch((err) => {
+			console.log(err);
+			
 			this.notificationMessage(err , '')
 		});
         
-    },
+    }
 	mounted() {
 		this.completed = this.completedOptions[0]
-	},
-    methods: {
-		setCourseCompleted(data) {
-			let payload = {
-				student_id : data.user_id,
-				course_id : data.course_id,
-				teacher_id : this.loggedUser.id,
-			}
+	}
 
-			this.$store.dispatch("teacherStore/setCourseCompleted", payload)
-			.then((res) => {
-				console.log(res);
-				this.notificationMessage(res , 'COURSE_FINISHED');
-				this.filterList();
-			})
-			.catch((err) => {
-				this.notificationMessage(err , '')
-			});
-		},
-		formatDate(data) {
-			return moment(data).format('DD.MM.YYYY')
-		},
-		filterList(){
-			let payload = {
+
+	public setCourseCompletedMethod(data : any) {
+		let payload = {
+			student_id : data.user_id,
+			course_id : data.course_id,
+			teacher_id : this.getLoggedUser?.id,
+		}
+
+		this.setCourseCompleted(payload)
+		.then((res) => {
+			this.notificationMessage(res , 'COURSE_FINISHED');
+			this.filterList();
+		})
+		.catch((err) => {
+			this.notificationMessage(err , '')
+		});
+	}
+
+	public formatDate(data : string) {
+		return moment(data).format('DD.MM.YYYY')
+	}
+
+	public filterList(){
+		let payload = {
 				course_id : this.selectedCourse.id,
 				complete : this.completed.value,
+				start_date : this.startDate ? this.startDate : null 
 			}
-			this.startDate ? payload.start_date = this.startDate : '';
+		 
+		this.fetchTeacherStudents(payload)
+		.then(() => {})
+		.catch((err) => {
+			this.notificationMessage(err , '')
+		});
+	}
 
-			this.$store.dispatch("teacherStore/fetchTeacherStudents", payload)
-			.then(() => {})
-			.catch((err) => {
-				this.notificationMessage(err , '')
-			});
-		}
-	},
-    computed: {
-		teacherCourses() {
-            return this.$store.getters["teacherStore/getState"]("teacherCourses")
-        },
-        teacherStudents() {
-            return this.$store.getters["teacherStore/getState"]("teacherStudents")
-        },
-        loggedUser() {
-            return this.$store.getters["authStore/getState"]("loggedUser");
-        },
-    },
-	watch: {
-    }
+	@TeacherStore.Getter
+		public getTeacherStudents!: [] | null ;
+
+	@TeacherStore.Getter
+    	public getTeacherCourses!: [] | null;
+
+	@AuthStore.Getter
+		public getLoggedUser!: idObject | null ;
 }
 </script>
 

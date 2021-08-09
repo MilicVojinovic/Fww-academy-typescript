@@ -29,35 +29,45 @@
 </template>
 
 <script lang="ts">
-export default {
-    data() {
-        return {}
-    },
+import NotificationMessageMixin from "@/common/mixins/NotificationMessageMixin";
+
+import { idObject } from '@/common/typeInterfaces/idObjects';
+
+import { namespace } from "vuex-class";
+
+const StudentStore = namespace("studentStore");
+const AuthStore = namespace("authStore");
+
+export default class StudentCurrentCourses extends NotificationMessageMixin {
+
+	@StudentStore.Action
+	public fetchStudentsCurrentCourses!: (payload : any) => Promise<any>;
+
+	@StudentStore.Mutation
+	public setApplyToCourse! : (payload : boolean) => void
+
+
 	created() {
-        this.$store.dispatch("studentStore/fetchStudentsCurrentCourses", {
-                student_id: this.loggedUser.id
+        this.fetchStudentsCurrentCourses({
+                student_id: this.getLoggedUser?.id
             })
             .then(() => {})
             .catch((err) => {
 				this.notificationMessage(err , '')
             });
-    },
-	methods: {
-		redirect(row) {
-			this.$store.commit('studentStore/setState', {
-					prop: 'apllyToCourse',
-					value: false
-			});
-			this.$router.push('course/' + row.course.id )
-		}
-	},
-    computed: {
-        loggedUser() {
-            return this.$store.getters["authStore/getState"]("loggedUser");
-        },
-		studentsCurrentCourses() {
-			return this.$store.getters["studentStore/getState"]("studentsCurrentCourses");
-		}
-    },
+    }
+
+	redirect(row : any) {
+		this.setApplyToCourse(false);
+		this.$router.push('course/' + row.course.id )
+	}
+
+
+    @AuthStore.Getter
+	public getLoggedUser!: idObject | null;
+
+	@StudentStore.Getter
+	public getStudentsCurrentCourses! : [] | null;
+
 }
 </script>

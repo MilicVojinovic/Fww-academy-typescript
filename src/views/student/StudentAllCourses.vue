@@ -53,48 +53,51 @@
 </template>
 
 <script lang="ts">
-export default {
-    data() {
-        return {
-			form : {
+import { namespace } from "vuex-class";
+
+
+const StudentStore = namespace("studentStore");
+import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin';
+
+export default class StudentAllCourses extends NotificationMessageMixin {
+	public form : {
+				course_name: string | null,
+				teacher_name: string | null,
+			} = {
 				course_name: null,
 				teacher_name: null,
 			}
-		}
-    },
-	created() {
-        this.$store.dispatch("studentStore/fetchStudentsUnattendedCourses", {})
-            .then(() => {})
-            .catch((err) => {
-				this.notificationMessage(err , '')
-            });
-    },
-	mounted() {},
-    methods: {
-		redirect(row) {
-			this.$store.commit('studentStore/setState', {
-					prop: 'apllyToCourse',
-					value: true
-			});
-			this.$router.push('course/' + row.course_id )
-		},
-		search() {
-			this.$store.dispatch("studentStore/fetchStudentsUnattendedCourses", this.form)
-            .then(() => {})
-            .catch((err) => {
-				this.notificationMessage(err , '')
-            });
-		},
-	},
-    computed: {
-        loggedUser() {
-            return this.$store.getters["authStore/getState"]("loggedUser");
-        },
-		studentsUnattendedCourses() {
-			return this.$store.getters["studentStore/getState"]("unattendedCourses");
-		},
 
-    },
+	@StudentStore.Action
+	public fetchStudentsUnattendedCourses! : (payload : any) => Promise<any>  
+
+	@StudentStore.Mutation
+	public setApplyToCourse! : (payload : boolean) => void
+
+	created() {
+        this.fetchStudentsUnattendedCourses({}).then(() => {})
+            .catch((err) => {
+				this.notificationMessage(err , '')
+            });
+    }
+
+	public redirect(row : any) {
+		this.setApplyToCourse(true);
+
+		this.$router.push('course/' + row.course_id )
+	}
+
+	public search() {
+		this.fetchStudentsUnattendedCourses({})
+		.then(() => {})
+		.catch((err) => {
+			this.notificationMessage(err , '')
+		});
+	}
+
+	@StudentStore.Getter
+	public getUnattendedCourses!: [] | null;
+
 }
 </script>
 <style lang="scss" scoped>

@@ -23,31 +23,50 @@
 
 <script lang="ts">
 import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
-export default {
-    data() {
-        return {
-            colorForStars: ['text-red-500', 'text-yellow-500', 'text-yellow-200', 'text-green-500', 'text-green-600'],
-            styleRate: null,
-            comment: '',
-			markIncrement: 0,
-        }
-    },
-	mixins: [NotificationMessageMixin],
+import { namespace } from "vuex-class";
+
+import { idObject } from '@/common/typeInterfaces/idObjects';
+
+const StudentStore = namespace("studentStore");
+const AuthStore = namespace("authStore");
+
+
+export default class StudentCourse extends NotificationMessageMixin {
+
+	public colorForStars: string[] =  ['text-red-500', 'text-yellow-500', 'text-yellow-200', 'text-green-500', 'text-green-600']
+	public styleRate: string | null = null; 
+	public comment: string = '';
+	public markIncrement: number = 0;
+
+	@StudentStore.Action
+	public fetchCourseInfo!: (payload: any ) => Promise<any>
+
+	@StudentStore.Action
+	public fetchStudentsCourseInfo!: (payload: any ) => Promise<any>
+
+	@StudentStore.Action
+	public requestCourse!: (payload: any ) => Promise<any>
+
+	
+
+
+
+
     created() {
-        this.$store.dispatch("studentStore/fetchCourseInfo", {
+        this.fetchCourseInfo({
                 course_id: this.$route.params.id
-            })
+		})
             .then(() => {
-                let width = Math.floor(this.courseInfo.average_mark / 5 * 230);
+                let width = Math.floor(this.getCourseInfo ? this.getCourseInfo.average_mark : 0 / 5 * 230);
 				setTimeout(() => {
 					this.styleRate = `width:${width}px`;
 				}, 10);
-				this.animateMarkIncrement(this.courseInfo.average_mark);
+				this.animateMarkIncrement(this.getCourseInfo ? this.getCourseInfo.average_mark : 0);
             })
             .catch((err) => {
                 this.notificationMessage(err, '')
             });
-		this.$store.dispatch("studentStore/fetchStudentsCourseInfo", {
+		this.fetchCourseInfo({
                 course_id: this.$route.params.id
             })
             .then(() => {
@@ -55,12 +74,10 @@ export default {
             .catch((err) => {
                 this.notificationMessage(err, '')
         });
-    },
-    mounted() {
-    },
-    methods: {
-        requestCourse() {
-            this.$store.dispatch("studentStore/requestCourse", {
+    }
+
+	public requestCourseMethod() {
+            this.requestCourse({
                     course_id: this.$route.params.id,
 					comment: this.comment
                 })
@@ -70,8 +87,9 @@ export default {
                 .catch((err) => {
                     this.notificationMessage(err, '')
                 });
-        },
-		animateMarkIncrement(averageMark) {
+        }
+
+	public animateMarkIncrement(averageMark : number) {
 			let interval = setInterval(() => {
 				this.markIncrement += 0.01;
 				if (this.markIncrement >= averageMark) {
@@ -80,18 +98,13 @@ export default {
 				}
 			}, 1);
 		}
-    },
-    computed: {
-        courseInfo() {
-            return this.$store.getters["studentStore/getState"]("courseInfo");
-        },
-		unattendedCourseInfo() {
-            return this.$store.getters["studentStore/getState"]("unattendedCourseInfo");
-        },
-        apllyToCourse() {
-            return this.$store.getters["studentStore/getState"]("apllyToCourse");
-        }
-    },
+
+	@StudentStore.Getter
+	public getCourseInfo!: { average_mark : number } | null;
+
+	@StudentStore.Getter
+	public getUnattendedCourseInfo!: {} | null;
+
 }
 </script>
 

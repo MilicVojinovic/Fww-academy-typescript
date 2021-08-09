@@ -19,28 +19,16 @@
 </template>
 
 <script lang="ts">
+import NotificationMessageMixin from "@/common/mixins/NotificationMessageMixin";
+import Component from "vue-class-component";
 import {
     required,
     minLength,
     email
 } from "vuelidate/lib/validators";
-export default {
-    name: 'loginform',
-    data() {
-        return {
-            register: {
-                name: "",
-                surname: "",
-                email: "",
-                password: "",
-				role: "",
-            },
-        }
-    },
-    methods: {
 
-    },
-    validations: {
+@Component({
+	validations: {
         register: {
             name: {
                 required,
@@ -63,6 +51,23 @@ export default {
 			}
         },
     },
+})
+export default class RegisterForm extends NotificationMessageMixin  {
+            public register: {
+                name: string,
+                surname: string
+                email: string
+                password: string
+				role: string
+    } = {
+		name: '',
+        surname: '',
+        email: '',
+        password: '',
+		role: '',
+	}
+
+    
 }
 </script>
 

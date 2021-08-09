@@ -18,7 +18,6 @@ import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
 
 import {
     Component,
-    Mixins
 } from 'vue-property-decorator'
 
 @Component({
@@ -28,7 +27,7 @@ import {
 
 })
 
-export default class Register extends Mixins(NotificationMessageMixin) {
+export default class Register extends NotificationMessageMixin {
     mounted() {};
     register(registerData: object) {
         this.$store.dispatch("authStore/register", registerData).then((result) => {

@@ -16,11 +16,10 @@
 import LoginForm from './components/LoginForm.vue'
 import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
 import {
-    Component,
-    Mixins
+    Component
 } from 'vue-property-decorator'
-import { namespace } from "vuex-class";
 
+import { namespace } from "vuex-class";
 const AuthStore = namespace("authStore");
 
 @Component({
@@ -28,14 +27,15 @@ const AuthStore = namespace("authStore");
     LoginForm
   }
 })
-export default class Login extends Mixins(NotificationMessageMixin) {
-	mounted() {};
-
+export default class Login extends NotificationMessageMixin {
+	
 	@AuthStore.Action
-	login!: (data: any) => Promise<any>;
+	public login!: (payload: any) => Promise<any>
+
 
     signIn(loginData : object) {
-        this.login(loginData).then((result) => {
+		
+        this.login(loginData).then((result: any) => {
             this.$router.push(result)
         })
 		.catch((err) => {

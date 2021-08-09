@@ -21,22 +21,22 @@ const loaderOn = () => {
 }
 
 
-axiosInstance.interceptors.request.use((config) => {
+axiosInstance.interceptors.request.use((config : any) => {
 	const token = localStorage.getItem(TOKEN_LS_NAME);
 	if (token) {
 		config.headers["session-id"] = token
 	}
-	// loaderOn();
+	loaderOn();
 	return config;
 });
 
 axiosInstance.interceptors.response.use(
 	(response) => {
-		// loaderOff();
+		loaderOff();
 		return Promise.resolve(response);
 	},
 	(error) => {
-		// loaderOff();
+		loaderOff();
 		return Promise.reject(error);
 	}
 );

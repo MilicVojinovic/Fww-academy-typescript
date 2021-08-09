@@ -53,45 +53,19 @@
 
 <script lang="ts">
 import {
-    Component,
+    Component, Prop ,
     Vue
 } from 'vue-property-decorator'
 @Component({
-    props: {
-        tableHead: {
-            required: true,
-            type: Array
-        },
-        tableData: {
-            required: true,
-            type: Array,
-        },
-		tableDataFields: {
-			required: true,
-            type: Array,
-		},
-		slotProp: {
-			required: false,
-			default: false
-		},
-		deleteItem: {
-			required: false,
-            type: Boolean,
-			default: true,
-		},
-		editItem: {
-			required: false,
-            type: Boolean,
-			default: true,
-		},
-		rowClass: {
-			required: false,
-            type: String,
-		}
-    },
 })
 export default class Table extends Vue {
-    
+	@Prop({required: true}) readonly tableHead! : [];
+	@Prop({required: true}) readonly tableData! : [];
+	@Prop({required: true}) readonly tableDataFields! : [];
+	@Prop({required: false , default: false}) readonly slotProp! : boolean;
+	@Prop({required: false , default: true}) readonly deleteItem! : boolean;
+	@Prop({required: false , default: true}) readonly editItem! : boolean;
+	@Prop({required: false}) readonly rowClass! : string;
 }
 </script>
 

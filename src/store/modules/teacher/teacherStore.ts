@@ -3,6 +3,8 @@ import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
 import { Commit } from 'vuex';
 import { Dispatch } from 'vuex';
 import { idObject } from '@/common/typeInterfaces/idObjects';
+import store from "../../index";
+
 @Module({ namespaced: true })
 class TeacherStore extends VuexModule {
 
@@ -47,33 +49,33 @@ class TeacherStore extends VuexModule {
 	}
 
 	@Action({ rawError: true })
-	async fetchAllTeachers({ commit }: { commit: Commit }) {
+	async fetchAllTeachers() {
 		try {
 			const fetchAllTeachers = await teacherService.fetchAllTeachers();
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'allTeachers',
 				value: fetchAllTeachers.data
 			});
 
-			return Promise.resolve(fetchAllTeachers);
+			return Promise.resolve(fetchAllTeachers.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
 	}
 	@Action({ rawError: true })
-	async fetchTeacherData({ commit }: { commit: Commit }, payload: any) {
+	async fetchTeacherData(payload: any) {
 		try {
 			const fetchTeacherData = await teacherService.fetchTeacherData(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'teacher',
 				value: fetchTeacherData.data
 			});
 
-			return Promise.resolve(fetchTeacherData);
+			return Promise.resolve(fetchTeacherData.data);
 		} catch (error) {
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'teacher',
 				value: null
 			});
@@ -82,73 +84,73 @@ class TeacherStore extends VuexModule {
 		}
 	}
 	@Action({ rawError: true })
-	async fetchTeacherCourses({ commit }: { commit: Commit }, payload: any) {
+	async fetchTeacherCourses(payload: any) {
 		try {
 			const fetchTeacherCourses = await teacherService.fetchTeacherCourses(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'teacherCourses',
 				value: fetchTeacherCourses.data
 			});
 
-			return Promise.resolve(fetchTeacherCourses);
+			return Promise.resolve(fetchTeacherCourses.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
 	}
 	@Action({ rawError: true })
-	async createCourse({ dispatch }: { dispatch: Dispatch }, payload: any) {
+	async createCourse( payload: any) {
 		try {
 			const createCourse = await teacherService.createCourse(payload.data);
 
-			dispatch('fetchTeacherCourses', {
+			this.context.dispatch('fetchTeacherCourses', {
 				id: payload.id
 			})
 
-			return Promise.resolve(createCourse);
+			return Promise.resolve(createCourse.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
 	}
 	@Action({ rawError: true })
-	async editCourse({ dispatch }: { dispatch: Dispatch }, payload: any) {
+	async editCourse( payload: any) {
 		try {
 			const editCourse = await teacherService.editCourse(payload.data);
 
-			dispatch('fetchTeacherCourses', {
+			this.context.dispatch('fetchTeacherCourses', {
 				id: payload.id
 			})
 
-			return Promise.resolve(editCourse);
+			return Promise.resolve(editCourse.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
 	}
 	@Action({ rawError: true })
-	async deleteCourse({ dispatch }: { dispatch: Dispatch }, payload: any) {
+	async deleteCourse(payload: any) {
 		try {
 			const deleteCourse = await teacherService.deleteCourse(payload.data);
 
-			dispatch('fetchTeacherCourses', {
+			this.context.dispatch('fetchTeacherCourses', {
 				id: payload.id
 			})
 
-			return Promise.resolve(deleteCourse);
+			return Promise.resolve(deleteCourse.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
 	}
 	@Action({ rawError: true })
-	async fetchTeacherStudents({ commit }: { commit: Commit }, payload: any) {
+	async fetchTeacherStudents(payload: any) {
 		try {
 			const fetchTeacherStudents = await teacherService.fetchTeacherStudents(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'teacherStudents',
 				value: fetchTeacherStudents.data
 			});
 
-			return Promise.resolve(fetchTeacherStudents);
+			return Promise.resolve(fetchTeacherStudents.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
@@ -167,24 +169,23 @@ class TeacherStore extends VuexModule {
 	async setCourseCompleted(payload: any) {
 		try {
 			const setCourseCompleted = await teacherService.setCourseCompleted(payload);
-			console.log(setCourseCompleted);
 
-			return Promise.resolve(setCourseCompleted);
+			return Promise.resolve(setCourseCompleted.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
 	}
 	@Action({ rawError: true })
-	async fetchTeacherRequestCourses({ commit }: { commit: Commit }) {
+	async fetchTeacherRequestCourses() {
 		try {
 			const fetchTeacherRequestCourses = await teacherService.fetchTeacherRequestCourses();
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'teacherRequestCourses',
 				value: fetchTeacherRequestCourses.data
 			});
 
-			return Promise.resolve(fetchTeacherRequestCourses);
+			return Promise.resolve(fetchTeacherRequestCourses.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}
@@ -194,7 +195,7 @@ class TeacherStore extends VuexModule {
 		try {
 			const setCourseAccepted = await teacherService.setCourseAccepted(payload);
 
-			return Promise.resolve(setCourseAccepted);
+			return Promise.resolve(setCourseAccepted.data);
 		} catch (error) {
 			return Promise.reject(error);
 		}

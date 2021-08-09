@@ -9,37 +9,28 @@
         <Input type="number" :disabled="!!courseDataForEdit && courseDataForEdit.see" placeholder="Cena (rsd)" v-model="courseData.price" class="my-4" @input="courseData.price = $event" :validate="!$v.courseData.price.minLength" />
         <textarea :disabled="!!courseDataForEdit && courseDataForEdit.see" class="text-black rounded-md p-2 w-9/12 mt-4" placeholder="Opis kursa" v-model="courseData.description" :class="{ 'border border-red-500' : !$v.courseData.description.minLength }" name="comment" id="" rows="5"></textarea>
         <Button v-if="(courseDataForEdit && !courseDataForEdit.see) || !courseDataForEdit "  class="bg-blue-900 text-lg px-5 py-3 mt-6" :validate="$v.courseData.$invalid" :text="!courseDataForEdit ? 'Sačuvaj' : 'Sačuvaj izmenu' " 
-		@click="!!courseDataForEdit ? editCourse() : createCourse()" />
+		@click="!!courseDataForEdit ? editCourseMethod() : createCourseMethod()" />
     </div>
 </div>
 </template>
 
 <script lang="ts">
 import NotificationMessageMixin from "@/common/mixins/NotificationMessageMixin";
+import  { Prop , Component } from "vue-property-decorator";
+import { idObject } from '@/common/typeInterfaces/idObjects';
+
 import {
     required,
     minLength,
 } from "vuelidate/lib/validators";
-export default {
-    components: {
-    },
-    data() {
-        return {
-            courseData: {
-                name: '',
-                price: '',
-                description: '',
-            }
-        }
-    },
-	mixins: [NotificationMessageMixin],
-    props: {
-        courseDataForEdit: {
-            required: false,
-            type: Object,
-        }
-    },
-    validations: {
+
+import { namespace } from "vuex-class";
+
+const TeacherStore = namespace("teacherStore");
+const AuthStore = namespace("authStore");
+
+@Component({
+	validations: {
         courseData: {
             name: {
                 required,
@@ -55,57 +46,76 @@ export default {
             },
         },
     },
+	})
+export default class TeacherNewCourseModal extends NotificationMessageMixin  {
+	@Prop({required: false}) readonly courseDataForEdit! : {}
+	
+	public courseData : any = {} ; 
+	
     created() {
-        if (this.courseDataForEdit) {
-            for (const key in this.courseData) {
-				this.courseData[key] = this.courseDataForEdit[key];
-            }
-        }
-    },
-    methods: {
-        createCourse() {
-            this.$store.dispatch("teacherStore/createCourse", {
-                    id: this.loggedUser.id,
-                    data: this.courseData
-                })
-                .then((res) => {
-                    this.$emit('closeModal')
-					this.notificationMessage(res , 'COURSE_CREATED')
-                })
-                .catch((err) => {
-                    this.$emit('closeModal')
+        // if (this.courseDataForEdit) {
+        //     for (const key in this.courseData) {
+		// 		this.courseData[key] = this.courseDataForEdit[key];
+        //     }
+        // }
+
+		if (this.courseDataForEdit) {
+			this.courseData = JSON.parse(JSON.stringify(this.courseDataForEdit)) ; 
+		}
+
+    }
+
+	@TeacherStore.Action
+	public createCourse! : (payload : any) => Promise<any>;
+
+	@TeacherStore.Action
+	public editCourse! : (payload : any) => Promise<any>;
+
+	createCourseMethod() {
+		this.createCourse({
+				id: this.getLoggedUser?.id,
+				data: this.courseData
+			})
+			.then((res) => {
+				this.$emit('closeModal')
+				this.notificationMessage(res , 'COURSE_CREATED')
+			})
+			.catch((err) => {
+				this.$emit('closeModal')
                     this.notificationMessage(err , '')
-                });
-        },
-		editCourse() {
-			let payload = {
-				course_id : this.courseDataForEdit.id,
-				data : this.courseData
-			}
-            this.$store.dispatch("teacherStore/editCourse", {
-                    id: this.loggedUser.id,
-                    data: payload
-                })
-                .then((res) => {
-                    this.$emit('closeModal')
-					this.notificationMessage(res , 'COURSE_UPDATED')
-                })
-                .catch((err) => {
-                    this.$emit('closeModal')
-                    this.notificationMessage(err , '')
-                });
-        },
+			});
+	}
+
+	editCourseMethod() {
+		let payload = {
+			course_id : this.courseData.id,
+			data : this.courseData
+		}
+
+		console.log('ffff'  , this.getLoggedUser?.id);
 		
+
+		this.editCourse({
+				id: this.getLoggedUser?.id,
+				data: payload
+			})
+			.then((res) => {
+				this.$emit('closeModal')
+				this.notificationMessage(res , 'COURSE_UPDATED')
+			})
+			.catch((err) => {
+				this.$emit('closeModal')
+				this.notificationMessage(err , '')
+			});
+	}
 		
-    },
-    computed: {
-        teacherCourses() {
-            return this.$store.getters["teacherStore/getState"]("teacherCourses")
-        },
-        loggedUser() {
-            return this.$store.getters["authStore/getState"]("loggedUser");
-        },
-    },
+	@AuthStore.Getter
+    	public getLoggedUser!: idObject | null;	
+	
+	@TeacherStore.Getter
+    	public getTeacherCourses!: [] | null;
+
+
 }
 </script>
 

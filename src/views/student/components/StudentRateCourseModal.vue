@@ -21,48 +21,59 @@
 
 <script lang="ts">
 import Button from '../../../common/components/Button.vue';
-import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin'
-export default {
-    components: {
-        Button
-    },
-    data() {
-        return {
-            form: {
+import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin';
+import { idObject } from '@/common/typeInterfaces/idObjects';
+
+import { namespace } from "vuex-class";
+
+const StudentStore = namespace("studentStore");
+const AuthStore = namespace("authStore");
+
+import {
+    Component,
+} from 'vue-property-decorator';
+
+@Component({
+	components: {
+    Button
+  }
+
+})
+export default class StudentRateCourseModal extends NotificationMessageMixin {
+
+	public form : { comment : string , mark : number | null } = {
                 comment: '',
                 mark: null,
-            },
-            colorForStars: ['text-red-500', 'text-yellow-500', 'text-yellow-200', 'text-green-500', 'text-green-600']
-        }
-    },
-    validations: {},
-    created() {
+            }
 
-    },
-	mixins: [NotificationMessageMixin],
-    methods: {
-        sendCourseRate() {
-            this.$store.dispatch("studentStore/sendCourseRate", {
-                student_id: this.loggedUser.id,
+	public colorForStars : string[] = ['text-red-500', 'text-yellow-500', 'text-yellow-200', 'text-green-500', 'text-green-600']
+
+	@StudentStore.Action
+	public sendCourseRate! : (payload : any) => Promise<any>  
+
+	@StudentStore.Action
+	public setUnratedCourse! : (payload : any) => void
+
+
+    public sendCourseRateMethod() {
+            this.sendCourseRate({
+                student_id: this.getLoggedUser?.id,
                 data: this.form,
             }).then((res) => {
                 this.notificationMessage(res, 'COURSE_RATED');
 
-				this.$store.commit('studentStore/setState', {
-					prop: 'unratedCourse',
-					value: null
-				});
+				this.setUnratedCourse(null);
 			});
 		}
-    },
-    computed: {
-        unratedCourse() {
-            return this.$store.getters["studentStore/getState"]("unratedCourse")
-        },
-		loggedUser() {
-            return this.$store.getters["authStore/getState"]("loggedUser");
-        },
-    }
+
+	@StudentStore.Getter
+    public getUnratedCourse!: {} | null;
+	
+	@AuthStore.Getter
+    public getLoggedUser!: idObject | null;
+
+
+
 }
 </script>
 

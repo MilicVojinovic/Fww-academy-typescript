@@ -15,20 +15,17 @@ import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin';
 import { idObject } from '@/common/typeInterfaces/idObjects';
 import {
     Component,
-    Mixins
 } from 'vue-property-decorator';
 
 import { namespace } from "vuex-class";
 
 const AuthStore = namespace("authStore");
-const TeacherStore = namespace("teacherStore");
 
 @Component
-export default class TeacherHome extends Mixins(NotificationMessageMixin) {
+export default class TeacherHome extends NotificationMessageMixin {
 
 	@AuthStore.Getter
     public getLoggedUser!: idObject | null ;
 
 };
 </script>
-AuthStore

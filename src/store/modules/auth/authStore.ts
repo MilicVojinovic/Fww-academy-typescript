@@ -1,14 +1,13 @@
 import SHA512 from "crypto-js/sha512";
 import { ROLES, TOKEN_LS_NAME } from "../../../constants/constants";
 import { authService } from './auth.service';
-import store from '@/store';
 
-import { VuexModule, Module, getModule , Mutation, Action } from 'vuex-module-decorators'
-@Module({ namespaced: true, store})
+import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
+@Module({ namespaced: true})
 class AuthStore extends VuexModule {
-	public loggedUser: object | null = null;
+	public loggedUser: object = {};
 
-	get getLoggedUser(): object | null {
+	get getLoggedUser(): object {
 		return this.loggedUser;
 	}
 
@@ -24,6 +23,7 @@ class AuthStore extends VuexModule {
 	@Action({ rawError: true })
 	async login(payload: any): Promise<any> {
 		try {
+			
 			let formData = { ...payload };
 
 			formData.password = SHA512(formData.password).toString()

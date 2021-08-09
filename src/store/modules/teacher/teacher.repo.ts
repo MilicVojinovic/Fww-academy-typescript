@@ -41,7 +41,7 @@ class TeacherRepo {
 	}
 
 	fetchTeacherStudents(payload : any) {
-		const query = queryString.stringify(payload);
+		const query = queryString.stringify(payload , { skipNull : true});
 		const URL = `${ROUTES.STUDENTS}?${query}`
 		return api.get(URL);
 	}

@@ -39,7 +39,6 @@ export default class Messages extends Mixins(NotificationMessageMixin) {
             }
         })
 		}
-        
     };
 
 	@AppStore.Getter

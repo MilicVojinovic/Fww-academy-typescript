@@ -14,5 +14,5 @@ const store = new Vuex.Store({
 		teacherStore,
 		studentStore,
 	}
-  })
+})
   export default store

@@ -4,22 +4,63 @@ import { Commit } from 'vuex';
 @Module({ namespaced: true })
 class StudentStore extends VuexModule {
 
-	public unratedCourse: object | null = null;
+	public  unratedCourse: {} | null = null;
 	public	studentCourses: [] = [];
-	public	unattendedCourses: [] = [];
+	public	unattendedCourses: [] | null = [];
 	public	unattendedCourseInfo: [] | null = null;
-	public	studentsFinishedCourses: [] = [];
-	public	studentsCurrentCourses: [] = [];
-	public	courseInfo: object | null = null;
-	public	applyToCourse: object | null = null;
+	public	studentsFinishedCourses: [] | null = [];
+	public	studentsCurrentCourses: [] | null = [];
+	public	courseInfo: {} | null = null;
+	public	applyToCourse: {} | null = null;
 
-	getState(state: any, prop: any): any {
-		return state[prop];
-	};
+	get getUnratedCourse() : {} | null {
+		return this.unratedCourse;
+	}
+
+	get getStudentCourses() : [] {
+		return this.studentCourses;
+	}
+
+	get getUnattendedCourses() : [] | null {
+		return this.unattendedCourses;
+	}
+
+	get getUnattendedCourseInfo() : [] | null {
+		return this.unattendedCourseInfo;
+	}
+
+	get getStudentsFinishedCourses() : [] | null {
+		return this.studentsFinishedCourses;
+	}
+
+	get getStudentsCurrentCourses() : [] | null {
+		return this.studentsCurrentCourses;
+	}
+
+	get getCourseInfo() : {} | null {
+		return this.courseInfo;
+	}
+
+	get getApplyToCourse() : {} | null {
+		return this.applyToCourse;
+	}
+
+
+
 
 	@Mutation
 	public setState(state: any, obj: { prop: any; value: any }) {
 		state[obj.prop] = obj.value;
+	}
+
+	@Mutation
+	public setApplyToCourse(state : any, applyToCourse: any) {
+		state.applyToCourse = applyToCourse;
+	}
+
+	@Mutation
+	public setUnratedCourse(state : any, unratedCourse: any) {
+		state.unratedCourse = unratedCourse
 	}
 
 	@Action

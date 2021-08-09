@@ -1,8 +1,8 @@
 <template>
 <div id="app" class="h-screen w-screen">
     <div class="h-full">
-        <component v-if="getLoader" :is="'loader'"></component>
-		<component v-if="getMessages && getMessages.response" :is="'messages'"></component>
+        <loader v-if="getLoader"></loader>
+		<messages v-if="getMessages && getMessages.response"></messages>
         <layout>
             <router-view />
         </layout>
@@ -24,6 +24,7 @@ const AppStore = namespace("appStore");
 @Component
 export default class App extends Vue {
     mounted() {}
+	
     @AppStore.Getter
     public getLoader: any;
 

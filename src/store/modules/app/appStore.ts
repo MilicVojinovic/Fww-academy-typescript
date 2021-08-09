@@ -1,7 +1,6 @@
 
 import { VuexModule, Module, Mutation } from 'vuex-module-decorators';
-import store from '@/store';
-@Module({ namespaced: true, store })
+@Module({ namespaced: true })
 class AppStore extends VuexModule {
 	public name: string = '';
 	public loader: boolean = false;
