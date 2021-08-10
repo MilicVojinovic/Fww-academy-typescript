@@ -23,9 +23,9 @@
 		</div>
 	</div>
 	
-	<div v-if="studentsUnattendedCourses" class="flex flex-grow relative">
+	<div v-if="getUnattendedCourses" class="flex flex-grow relative">
 		<Scroll class="scroll">
-			<Table :tableHead="['Naziv kursa' , 'Cena (.rsd)' , 'Kurs kreirao profesor' ]"  :tableData="studentsUnattendedCourses"
+			<Table :tableHead="['Naziv kursa' , 'Cena (.rsd)' , 'Kurs kreirao profesor' ]"  :tableData="getUnattendedCourses"
 			:tableDataFields='[
 			{
 				value:"course_name",
@@ -55,10 +55,12 @@
 <script lang="ts">
 import { namespace } from "vuex-class";
 
+import { Component } from 'vue-property-decorator';
 
 const StudentStore = namespace("studentStore");
 import NotificationMessageMixin from '@/common/mixins/NotificationMessageMixin';
 
+@Component
 export default class StudentAllCourses extends NotificationMessageMixin {
 	public form : {
 				course_name: string | null,
@@ -88,7 +90,7 @@ export default class StudentAllCourses extends NotificationMessageMixin {
 	}
 
 	public search() {
-		this.fetchStudentsUnattendedCourses({})
+		this.fetchStudentsUnattendedCourses(this.form)
 		.then(() => {})
 		.catch((err) => {
 			this.notificationMessage(err , '')

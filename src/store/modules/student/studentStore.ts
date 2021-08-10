@@ -11,7 +11,7 @@ class StudentStore extends VuexModule {
 	public	studentsFinishedCourses: [] | null = [];
 	public	studentsCurrentCourses: [] | null = [];
 	public	courseInfo: {} | null = null;
-	public	applyToCourse: {} | null = null;
+	public	applyToCourse: boolean | null = null;
 
 	get getUnratedCourse() : {} | null {
 		return this.unratedCourse;
@@ -41,7 +41,7 @@ class StudentStore extends VuexModule {
 		return this.courseInfo;
 	}
 
-	get getApplyToCourse() : {} | null {
+	get getApplyToCourse() : boolean | null {
 		return this.applyToCourse;
 	}
 
@@ -49,26 +49,30 @@ class StudentStore extends VuexModule {
 
 
 	@Mutation
-	public setState(state: any, obj: { prop: any; value: any }) {
-		state[obj.prop] = obj.value;
+	public setState(obj: any) {
+		for (const key in this) {
+			if (key === obj.prop) {
+				this[key] = obj.value;
+			}
+		}
 	}
 
 	@Mutation
-	public setApplyToCourse(state : any, applyToCourse: any) {
-		state.applyToCourse = applyToCourse;
+	public setApplyToCourse(applyToCourse: any) {
+		this.applyToCourse = applyToCourse;
 	}
 
 	@Mutation
-	public setUnratedCourse(state : any, unratedCourse: any) {
-		state.unratedCourse = unratedCourse
+	public setUnratedCourse(unratedCourse: any) {
+		this.unratedCourse = unratedCourse
 	}
 
 	@Action
-	async fetchUnratedCourse({ commit }: { commit: Commit }, payload : any) {
+	async fetchUnratedCourse( payload : any ) {
 		try {
 			const fetchUnratedCourse = await studentService.fetchUnratedCourse(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'unratedCourse',
 				value: fetchUnratedCourse.data
 			})
@@ -78,20 +82,28 @@ class StudentStore extends VuexModule {
 			return Promise.reject(error);
 		}
 	};
+	@Action
 	async sendCourseRate( payload : any) {
 		try {
 			const sendCourseRate = await studentService.sendCourseRate(payload);
+
+			this.context.commit('setState', {
+				prop: 'unratedCourse',
+				value: null
+			});
 
 			return Promise.resolve(sendCourseRate);
 		} catch (error) {
 			return Promise.reject(error);
 		}
 	};
-	async fetchStudentsFinishedCourses({ commit }: { commit: Commit }, payload : any) {
+	@Action
+	async fetchStudentsFinishedCourses( payload : any) {
 		try {
+
 			const fetchStudentsFinishedCourses = await studentService.fetchStudentsFinishedCourses(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'studentsFinishedCourses',
 				value: fetchStudentsFinishedCourses.data
 			});
@@ -101,11 +113,12 @@ class StudentStore extends VuexModule {
 			return Promise.reject(error);
 		}
 	};
-	async fetchStudentsUnattendedCourses({ commit }: { commit: Commit } , payload : any) {
+	@Action
+	async fetchStudentsUnattendedCourses( payload : any) {
 		try {
 			const fetchStudentsUnattendedCourses = await studentService.fetchStudentsUnattendedCourses(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'unattendedCourses',
 				value: fetchStudentsUnattendedCourses.data
 			});
@@ -115,11 +128,12 @@ class StudentStore extends VuexModule {
 			return Promise.reject(error);
 		}
 	};
-	async fetchStudentsCourseInfo({ commit }: { commit: Commit } , payload : any) {
+	@Action
+	async fetchStudentsCourseInfo( payload : any) {
 		try {
 			const fetchStudentsCourseInfo = await studentService.fetchStudentsCourseInfo(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'unattendedCourseInfo',
 				value: fetchStudentsCourseInfo.data
 			});
@@ -129,11 +143,12 @@ class StudentStore extends VuexModule {
 			return Promise.reject(error);
 		}
 	};
-	async fetchStudentsCurrentCourses({ commit }: { commit: Commit } , payload : any) {
+	@Action
+	async fetchStudentsCurrentCourses( payload : any) {
 		try {
 			const fetchStudentsCurrentCourses = await studentService.fetchStudentsCurrentCourses(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'studentsCurrentCourses',
 				value: fetchStudentsCurrentCourses.data
 			});
@@ -143,11 +158,12 @@ class StudentStore extends VuexModule {
 			return Promise.reject(error);
 		}
 	};
-	async fetchCourseInfo({ commit }: { commit: Commit } , payload : any) {
+	@Action
+	async fetchCourseInfo( payload : any) {
 		try {
 			const fetchCourseInfo = await studentService.fetchCourseInfo(payload);
 
-			commit('setState', {
+			this.context.commit('setState', {
 				prop: 'courseInfo',
 				value: fetchCourseInfo.data
 			});
@@ -157,7 +173,8 @@ class StudentStore extends VuexModule {
 			return Promise.reject(error);
 		}
 	};
-	async requestCourse({ commit }: { commit: Commit }, payload : any) {
+	@Action
+	async requestCourse( payload : any) {
 		try {
 			const requestCourse = await studentService.requestCourse(payload);
 

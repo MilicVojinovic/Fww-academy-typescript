@@ -1,13 +1,13 @@
 <template>
     <div class="flex flex-grow p-5 bg-blue-50">
         <StudentRateCourseModal
-            v-if="unratedCourse && Object.keys(unratedCourse).length != 0"
+            v-if="getUnratedCourse && Object.keys(getUnratedCourse).length != 0"
         />
         <div class="flex flex-col">
             <div class="mb-3">Vaši podaci</div>
-            <div class="mb-3">Ime : {{ loggedUser.name }}</div>
-            <div class="mb-3">Prezime : {{ loggedUser.surname }}</div>
-            <div class="mb-3">E-mail : {{ loggedUser.email }}</div>
+            <div class="mb-3">Ime : {{ getLoggedUser.name }}</div>
+            <div class="mb-3">Prezime : {{ getLoggedUser.surname }}</div>
+            <div class="mb-3">E-mail : {{ getLoggedUser.email }}</div>
         </div>
     </div>
 </template>
@@ -40,6 +40,8 @@ export default class StudentHome extends NotificationMessageMixin {
             })
             .then(() => {})
             .catch((err) => {
+				console.log(err);
+				
                 this.notificationMessage(err, "");
             });
     }

@@ -1,8 +1,8 @@
 <template>
 <div class="flex flex-grow justify-center relative">
-    <div v-if="studentsFinishedCourses" class="flex flex-grow relative">
+    <div v-if="getStudentsFinishedCourses" class="flex flex-grow relative">
         <Scroll class="scroll">
-            <Table :tableHead="['Naziv kursa' , 'Vaš komentar kursa' , 'Vaša ocena kursa' , 'Prosečna ocena kursa']"  :tableData="studentsFinishedCourses"
+            <Table :tableHead="['Naziv kursa' , 'Vaš komentar kursa' , 'Vaša ocena kursa' , 'Prosečna ocena kursa']"  :tableData="getStudentsFinishedCourses"
 			:tableDataFields='[
 			{
 				value:"course",
@@ -41,11 +41,12 @@ import NotificationMessageMixin from "@/common/mixins/NotificationMessageMixin";
 
 import { namespace } from "vuex-class";
 import { idObject } from "@/common/typeInterfaces/idObjects";
+import { Component } from "vue-property-decorator";
 
 const StudentStore = namespace("studentStore");
 const AuthStore = namespace("authStore");
 
-
+@Component
 export default class studentsFinishedCourses extends NotificationMessageMixin {
 
 	@StudentStore.Mutation

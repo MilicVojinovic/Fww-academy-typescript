@@ -1,7 +1,5 @@
 import { teacherService } from './teacher.service'
 import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
-import { Commit } from 'vuex';
-import { Dispatch } from 'vuex';
 import { idObject } from '@/common/typeInterfaces/idObjects';
 import store from "../../index";
 

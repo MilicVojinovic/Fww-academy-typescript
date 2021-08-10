@@ -1,7 +1,7 @@
 <template>
 <div class="student-rate-course-modal flex w-full h-full justify-center items-center absolute left-0 top-0 z-10">
     <div class="text-white student-rate rounded-xl flex flex-col items-center justify-around w-4/12">
-        <div class="py-4 text-xl">Ocenite kurs : {{ unratedCourse.course.name }} </div>
+        <div class="py-4 text-xl">Ocenite kurs : {{ getUnratedCourse.course.name }} </div>
         <div class="flex flex-col">
             <span class="mb-2">Komentar</span>
             <textarea class="text-black rounded-md p-3" v-model="form.comment" name="comment" id="" cols="35" rows="5"></textarea>
@@ -14,7 +14,7 @@
                 <i v-for="index in 5" :key="index" class="fas fa-star mr-3 text-2xl cursor-pointer" :class="form.mark+1 > index ? colorForStars[form.mark-1]   : ''" @click="form.mark=index"></i>
             </div>
         </div>
-        <Button text="Sačuvaj" @click="sendCourseRate" :validate="!form.mark || !form.comment" class="bg-blue-800 w-6/12 text-lg h-8 p-4 mb-5" />
+        <Button text="Sačuvaj" @click="sendCourseRateMethod" :validate="!form.mark || !form.comment" class="bg-blue-800 w-6/12 text-lg h-8 p-4 mb-5" />
     </div>
 </div>
 </template>
@@ -51,18 +51,12 @@ export default class StudentRateCourseModal extends NotificationMessageMixin {
 	@StudentStore.Action
 	public sendCourseRate! : (payload : any) => Promise<any>  
 
-	@StudentStore.Action
-	public setUnratedCourse! : (payload : any) => void
-
-
     public sendCourseRateMethod() {
             this.sendCourseRate({
                 student_id: this.getLoggedUser?.id,
                 data: this.form,
             }).then((res) => {
                 this.notificationMessage(res, 'COURSE_RATED');
-
-				this.setUnratedCourse(null);
 			});
 		}
 

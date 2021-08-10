@@ -1,8 +1,8 @@
 <template>
 <div class="flex flex-grow justify-center relative">
-	<div v-if="studentsCurrentCourses" class="flex flex-grow relative">
+	<div v-if="getStudentsCurrentCourses" class="flex flex-grow relative">
         <Scroll class="scroll">
-            <Table :tableHead="['Naziv kursa' , 'Prosečna ocena kursa']"  :tableData="studentsCurrentCourses"
+            <Table :tableHead="['Naziv kursa' , 'Prosečna ocena kursa']"  :tableData="getStudentsCurrentCourses"
 			:tableDataFields='[
 			{
 				value:"course",
@@ -35,9 +35,12 @@ import { idObject } from '@/common/typeInterfaces/idObjects';
 
 import { namespace } from "vuex-class";
 
+import { Component } from 'vue-property-decorator';
+
 const StudentStore = namespace("studentStore");
 const AuthStore = namespace("authStore");
 
+@Component
 export default class StudentCurrentCourses extends NotificationMessageMixin {
 
 	@StudentStore.Action
